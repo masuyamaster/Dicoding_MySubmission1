@@ -1,13 +1,15 @@
 package com.roziqrizal.mysubmission
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
+@Suppress("NAME_SHADOWING")
 class MainActivity : AppCompatActivity() {
 
     private lateinit var rvUser: RecyclerView
@@ -31,6 +33,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val listHeroes: ArrayList<User>
+        @SuppressLint("Recycle")
         get() {
             val dataUser = resources.getStringArray(R.array.user_github)
             val dataName = resources.getStringArray(R.array.username)
@@ -62,6 +65,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showSelectedHero(user: User) {
-        Toast.makeText(this, "Kamu memilih " + user.username, Toast.LENGTH_SHORT).show()
+        val user = User(
+            user.user_github,
+            user.username,
+            user.avatar,
+            user.company,
+            user.location,
+            user.repository,
+            user.follower,
+            user.following
+        )
+
+        val moveWithObjectIntent = Intent(this@MainActivity, UserProfileActivity::class.java)
+        moveWithObjectIntent.putExtra(UserProfileActivity.user_data, user)
+        startActivity(moveWithObjectIntent)
     }
 }

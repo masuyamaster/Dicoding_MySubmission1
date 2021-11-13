@@ -1,9 +1,17 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="app_name">MySubmission</string>
     <string name="github_user_bar_title">Github Users</string>
+    <string name="github_user_detail_bar_title">Detail User</string>
     <string name="user_name">Username</string>
+    <string name="full_name">Full Name</string>
     <string name="company">Company</string>
     <string name="location">Location</string>
+    <string name="followers">followers</string>
+    <string name="following">following</string>
+    <string name="button">+ FOLLOW</string>
+    <string name="repository">Repository</string>
+    <string name="qty_repo">0</string>
+    <string name="todo">TODO</string>
 
     <string-array name="user_github">
         <item>JakeWharton</item>

@@ -18,8 +18,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="left|center_vertical"
+            android:gravity="start|center_vertical"
             android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:text="@string/github_user_bar_title"
             android:textColor="@color/primaryTextColor"
             android:textSize="20sp" />

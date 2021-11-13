@@ -1,6 +1,5 @@
 package com.roziqrizal.mysubmission
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,7 +28,7 @@ class ListUserAdapter(private val listUser: ArrayList<User>): RecyclerView.Adapt
     }
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-        val (user_github, username, avatar, company, location, repository, follower, following) = listUser[position]
+        val (_, username, avatar, company, location, _, _, _) = listUser[position]
         println("---------------------")
         println(username)
         println(company)
