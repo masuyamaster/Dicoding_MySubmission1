@@ -12,6 +12,8 @@
     <string name="repository">Repository</string>
     <string name="qty_repo">0</string>
     <string name="todo">TODO</string>
+    <string name="search_hint">Masukkan kata</string>
+    <string name="search">Search</string>
 
     <string-array name="user_github">
         <item>JakeWharton</item>

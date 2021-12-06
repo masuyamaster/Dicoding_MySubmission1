@@ -34,9 +34,9 @@ class ListUserAdapter(private val listUser: ArrayList<User>): RecyclerView.Adapt
         println(company)
         println(location)
         println(avatar)
-        holder.imgAvatar.setImageResource(avatar)
+        //holder.imgAvatar.setImageResource(avatar)
         Glide.with(holder.itemView.context)
-            .load(holder.imgAvatar.drawable) // URL Gambar
+            .load(avatar) // URL Gambar
             .circleCrop() // Mengubah image menjadi lingkaran
             .into(holder.imgAvatar) // imageView mana yang akan diterapkan
         holder.tvUsername.text = username

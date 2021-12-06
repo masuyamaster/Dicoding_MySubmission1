@@ -7,27 +7,6 @@
     android:background="@color/secondaryDarkColor"
     tools:context=".UserProfileActivity">
 
-    <RelativeLayout
-        android:id="@+id/relativeLayout"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/primaryDarkColor"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="start|center_vertical"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:text="@string/github_user_detail_bar_title"
-            android:textColor="@color/primaryTextColor"
-            android:textSize="20sp" />
-
-    </RelativeLayout>
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -38,7 +17,7 @@
         android:paddingBottom="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/relativeLayout">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/iv_avatar"
@@ -46,10 +25,10 @@
             android:layout_height="60dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="20dp"
+            android:contentDescription="@string/todo"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@tools:sample/avatars"
-            android:contentDescription="@string/todo" />
+            tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/username"
@@ -107,10 +86,10 @@
             android:layout_height="20dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="6dp"
+            android:contentDescription="@string/todo"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/location"
-            app:srcCompat="@drawable/ic_twotone_account_circle_24"
-            android:contentDescription="@string/todo" />
+            app:srcCompat="@drawable/ic_twotone_account_circle_24" />
 
         <TextView
             android:id="@+id/followers"
@@ -128,10 +107,10 @@
             android:layout_height="5dp"
             android:layout_marginStart="6dp"
             android:layout_marginBottom="6dp"
+            android:contentDescription="@string/todo"
             app:layout_constraintBottom_toBottomOf="@+id/followers"
             app:layout_constraintStart_toEndOf="@+id/followers"
-            app:srcCompat="@drawable/ic_baseline_brightness_1_24"
-            android:contentDescription="@string/todo" />
+            app:srcCompat="@drawable/ic_baseline_brightness_1_24" />
 
         <TextView
             android:id="@+id/following"
@@ -160,9 +139,10 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="409dp"
+        android:id="@+id/constraintLayout2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="12dp"
         android:background="@color/white"
         android:elevation="2dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -204,6 +184,34 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/textView9"
             app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:elevation="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
+
+        <com.google.android.material.tabs.TabLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/followers" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/following" />
+
+        </com.google.android.material.tabs.TabLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

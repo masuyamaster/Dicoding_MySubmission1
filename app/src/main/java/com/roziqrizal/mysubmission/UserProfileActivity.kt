@@ -6,12 +6,19 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.roziqrizal.mysubmission.databinding.ActivityMainBinding
+import com.roziqrizal.mysubmission.databinding.ActivityUserProfileBinding
 
 class UserProfileActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityUserProfileBinding
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_user_profile)
+        setTitle(R.string.github_user_detail_bar_title)
+        binding = ActivityUserProfileBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val imgAvatar: ImageView = findViewById(R.id.iv_avatar)
         val tvUsername: TextView = findViewById(R.id.username)
@@ -24,13 +31,12 @@ class UserProfileActivity : AppCompatActivity() {
 
         val person = intent.getParcelableExtra<User>(user_data) as User
 
-        imgAvatar.setImageResource(person.avatar)
         Glide.with(this)
-            .load(imgAvatar.drawable) // URL Gambar
+            .load(person.avatar) // URL Gambar
             .circleCrop() // Mengubah image menjadi lingkaran
             .into(imgAvatar) // imageView mana yang akan diterapkan
 
-        tvUsername.text = person.user_github
+        tvUsername.text = person.user_github.toString()
         tvFullName.text = person.username
         tvCompany.text = person.company
         tvLocation.text = person.location
