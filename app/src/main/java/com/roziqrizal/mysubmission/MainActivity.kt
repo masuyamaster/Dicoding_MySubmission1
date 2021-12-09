@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
             Gunakan method ini untuk merespon tiap perubahan huruf pada searchView
              */
             override fun onQueryTextChange(newText: String): Boolean {
-                getDataUser(newText)
+                //getDataUser(newText)
                 return false
             }
         })
