@@ -10,36 +10,40 @@ import retrofit2.Response
 
 class ModelMainActivity: ViewModel() {
 
-    var list = ArrayList<User>()
+    var list = ArrayList<UserItem>()
 
-    private val _search = MutableLiveData<List<ItemsItem>>()
-    val search: LiveData<List<ItemsItem>> = _search
+    private val _search = MutableLiveData<ArrayList<UserItem>>()
+    val search: LiveData<ArrayList<UserItem>> = _search
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
+
+
     companion object{
         private const val TAG = "MainViewModel"
         private const val RESTAURANT_ID = "uewq1zg2zlskfw1e867"
     }
 
     init {
-        findUser("adam")
+        //findUser("adam")
     }
 
-    private fun findUser(username: String){
+    fun findUser(username: String){
         _isLoading.value = true
         val client = ApiConfig.getApiService().getGithubUsers(username)
 
         client.enqueue(object : Callback<ResponseSearch> {
             override fun onResponse(call: Call<ResponseSearch>, response: Response<ResponseSearch>) {
                 val responseBody = response.body()
-                _isLoading.value = false
                 if (response.isSuccessful) {
-                    //_search.value = response.body()
+
+                    println("============= "+responseBody?.items)
                     _search.value = responseBody?.items
+                    list = responseBody!!.items
                 } else {
                     Log.e(TAG, "onFailure: ${response.message()}")
                 }
+                _isLoading.value = false
             }
             override fun onFailure(call: Call<ResponseSearch>, t: Throwable) {
                 _search.value = null
@@ -56,7 +60,7 @@ class ModelMainActivity: ViewModel() {
             override fun onResponse(call: Call<ResponseSearch>, response: Response<ResponseSearch>) {
                 val responseBody = response.body()
                 if (responseBody != null) {
-                    val item: List<ItemsItem?>? = responseBody.items
+                    val item: List<UserItem?>? = responseBody.items
                     list.clear()
                     for (i in item?.indices!!) {
                         val dataUser: String = item[i]!!.login

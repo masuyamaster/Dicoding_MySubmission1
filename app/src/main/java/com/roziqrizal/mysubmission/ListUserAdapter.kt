@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
-class ListUserAdapter(private val listUser: ArrayList<User>): RecyclerView.Adapter<ListUserAdapter.ListViewHolder>() {
+class ListUserAdapter(private val listUser: ArrayList<UserItem>): RecyclerView.Adapter<ListUserAdapter.ListViewHolder>() {
     private lateinit var onItemClickCallback: OnItemClickCallback
 
     fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
@@ -28,27 +28,20 @@ class ListUserAdapter(private val listUser: ArrayList<User>): RecyclerView.Adapt
     }
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-        val (_, username, avatar, company, location, _, _, _) = listUser[position]
-        println("---------------------")
-        println(username)
-        println(company)
-        println(location)
-        println(avatar)
         //holder.imgAvatar.setImageResource(avatar)
         Glide.with(holder.itemView.context)
-            .load(avatar) // URL Gambar
+            .load(listUser[position].avatarUrl) // URL Gambar
             .circleCrop() // Mengubah image menjadi lingkaran
             .into(holder.imgAvatar) // imageView mana yang akan diterapkan
-        holder.tvUsername.text = username
-        holder.tvCompany.text = company
-        holder.tvLocation.text = location
+        holder.tvUsername.text = listUser[position].login
+        holder.tvCompany.text = listUser[position].login
+        holder.tvLocation.text = listUser[position].login
+
         holder.itemView.setOnClickListener { onItemClickCallback.onItemClicked(listUser[holder.adapterPosition]) }
     }
 
-
-
     interface OnItemClickCallback {
-        fun onItemClicked(data: User)
+        fun onItemClicked(data: UserItem)
     }
 
 
