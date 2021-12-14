@@ -2,19 +2,13 @@ package com.roziqrizal.mysubmission
 
 import com.google.gson.annotations.SerializedName
 
-data class ResponseSearch(
+data class ResponseFollower(
 
-	@field:SerializedName("total_count")
-	val totalCount: Int? = null,
-
-	@field:SerializedName("incomplete_results")
-	val incompleteResults: Boolean? = null,
-
-	@field:SerializedName("items")
-	val items: ArrayList<UserItem>
+	@field:SerializedName("ResponseFollower")
+	val responseFollower: ArrayList<ResponseFollowerItem>
 )
 
-data class UserItem(
+data class ResponseFollowerItem(
 
 	@field:SerializedName("id")
 	val id: Int,
@@ -29,7 +23,7 @@ data class UserItem(
 	val gistsUrl: String? = null,
 
 	@field:SerializedName("repos_url")
-	val reposUrl: String,
+	val reposUrl: String? = null,
 
 	@field:SerializedName("following_url")
 	val followingUrl: String? = null,
@@ -39,4 +33,5 @@ data class UserItem(
 
 	@field:SerializedName("followers_url")
 	val followersUrl: String? = null
+
 )

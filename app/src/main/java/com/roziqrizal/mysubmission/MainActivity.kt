@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
             user.id,
             user.login,
             user.avatarUrl,
-            user.login,
+            user.reposUrl,
             user.login,
             user.login,
             user.login,
@@ -128,62 +128,4 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    /*private fun getDataUser(username: String) {
-
-
-
-        val client = ApiConfig.getApiService().getGithubUsers(username)
-
-        client.enqueue(object : Callback<ResponseSearch> {
-            override fun onResponse(call: Call<ResponseSearch>, response: Response<ResponseSearch>) {
-                val responseBody = response.body()
-                if (responseBody != null) {
-                    val item: List<ItemsItem?>? = responseBody.items
-                    list.clear()
-                    for (i in item?.indices!!) {
-                        val dataUser: String = item[i]!!.login
-                        val dataName: Int = item[i]!!.id
-                        val dataPhoto: String = item[i]!!.avatarUrl
-                        var dataCompany = ""
-                        var dataLocation = ""
-
-                        val usersDetail = ApiConfig.getApiService().getGithubUsersDetail(dataUser)
-                        usersDetail.enqueue(object : Callback<ResponseGithubUsersDetail> {
-                            override fun onResponse(call: Call<ResponseGithubUsersDetail>, response: Response<ResponseGithubUsersDetail>) {
-                                val responseBody = response.body()
-                                if (responseBody != null) {
-
-                                    if(responseBody.company!=null){
-                                        dataCompany = responseBody.company
-                                    }
-                                    if (responseBody.location!=null){
-                                        dataLocation = responseBody.location
-                                    }
-
-
-                                    //showRecyclerList()
-                                    val listHero = ArrayList<User>()
-
-                                    val hero = User(dataName,dataUser, dataPhoto, dataCompany, dataLocation, "", "", "")
-                                    listHero.add(hero)
-
-                                    list.addAll(listHero)
-                                }
-                            }
-                            override fun onFailure(call: Call<ResponseGithubUsersDetail>, t: Throwable) {
-                                Log.e(TAG, "onFailure: ${t.message.toString()}")
-                            }}
-                        )
-
-
-
-                    }
-
-                }
-            }
-            override fun onFailure(call: Call<ResponseSearch>, t: Throwable) {
-                Log.e(TAG, "onFailure: ${t.message.toString()}")
-            }
-        })
-    }*/
 }

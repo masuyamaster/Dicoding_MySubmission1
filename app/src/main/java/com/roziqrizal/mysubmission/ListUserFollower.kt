@@ -8,10 +8,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
-class ListUserAdapter(private val listUser: ArrayList<UserItem>): RecyclerView.Adapter<ListUserAdapter.ListViewHolder>() {
-    private lateinit var onItemClickCallback: OnItemClickCallback
+class ListUserFollower(private val listUser: ArrayList<ResponseFollowerItem>): RecyclerView.Adapter<ListUserAdapter.ListViewHolder>()  {
 
-    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
+    private lateinit var onItemClickCallback: ListUserAdapter.OnItemClickCallback
+
+    fun setOnItemClickCallback(onItemClickCallback: ListUserAdapter.OnItemClickCallback) {
         this.onItemClickCallback = onItemClickCallback
     }
 
@@ -22,13 +23,15 @@ class ListUserAdapter(private val listUser: ArrayList<UserItem>): RecyclerView.A
         var tvLocation: TextView = itemView.findViewById(R.id.tv_item_location)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ListUserAdapter.ListViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.item_user, parent, false)
-        return ListViewHolder(view)
+        return ListUserAdapter.ListViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-        //holder.imgAvatar.setImageResource(avatar)
+    override fun onBindViewHolder(holder: ListUserAdapter.ListViewHolder, position: Int) {
         Glide.with(holder.itemView.context)
             .load(listUser[position].avatarUrl) // URL Gambar
             .circleCrop() // Mengubah image menjadi lingkaran
@@ -37,13 +40,12 @@ class ListUserAdapter(private val listUser: ArrayList<UserItem>): RecyclerView.A
         holder.tvCompany.text = listUser[position].id.toString()
         holder.tvLocation.text = listUser[position].reposUrl
 
-        holder.itemView.setOnClickListener { onItemClickCallback.onItemClicked(listUser[holder.adapterPosition]) }
+
     }
 
     interface OnItemClickCallback {
-        fun onItemClicked(data: UserItem)
+        fun onItemClicked(data: ResponseFollowerItem)
     }
-
 
     override fun getItemCount(): Int = listUser.size
 }

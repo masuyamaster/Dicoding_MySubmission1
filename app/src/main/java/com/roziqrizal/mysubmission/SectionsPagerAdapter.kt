@@ -1,5 +1,6 @@
 package com.roziqrizal.mysubmission
 
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -8,8 +9,10 @@ class SectionsPagerAdapter(activity: AppCompatActivity) : FragmentStateAdapter(a
     override fun createFragment(position: Int): Fragment {
         var fragment: Fragment? = null
         when (position) {
-            0 -> fragment = FollowerFragment()
-            1 -> fragment = FollowingFragment()
+            0 -> {
+                fragment = FollowerFragment.newInstance(UserProfileActivity.user_data)
+            }
+            1 -> fragment = FollowingFragment.newInstance(UserProfileActivity.user_data)
         }
         return fragment as Fragment
     }
@@ -17,5 +20,7 @@ class SectionsPagerAdapter(activity: AppCompatActivity) : FragmentStateAdapter(a
     override fun getItemCount(): Int {
         return 2
     }
+
+
 
 }
