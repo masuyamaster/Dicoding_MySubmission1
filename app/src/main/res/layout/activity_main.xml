@@ -25,9 +25,13 @@
             android:textColor="@color/primaryTextColor"
             android:textSize="20sp" />
 
-    </RelativeLayout>-->
+    </RelativeLayout>--><![CDATA[
 
     >
+
+
+
+    ]]>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_user"

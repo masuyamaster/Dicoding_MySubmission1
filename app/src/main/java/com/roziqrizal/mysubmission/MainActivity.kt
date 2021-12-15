@@ -7,8 +7,11 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import android.widget.Button
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
@@ -28,6 +31,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mainViewModel: ModelMainActivity
 
+    private lateinit var button: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -38,7 +43,6 @@ class MainActivity : AppCompatActivity() {
         rvUser = binding.rvUser
         rvUser.setHasFixedSize(true)
         rvUser.layoutManager = LinearLayoutManager(this)
-
 
 
         if (applicationContext.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -89,6 +93,18 @@ class MainActivity : AppCompatActivity() {
             }
         })
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        return when (item.itemId) {
+            R.id.setting -> {
+                val moveWithObjectIntent = Intent(this, SettingActivity::class.java)
+                startActivity(moveWithObjectIntent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     fun showRecyclerList(listArr: ArrayList<UserItem>){

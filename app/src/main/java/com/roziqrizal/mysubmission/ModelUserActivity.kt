@@ -90,6 +90,7 @@ class ModelUserActivity: ViewModel() {
                 val responseBody = response.body()
                 if (responseBody != null) {
                     usernameTV = responseBody.login
+                    if (responseBody.name!=null)
                     userGithub = responseBody.name
                     if (responseBody.company!=null)
                     company = responseBody.company
