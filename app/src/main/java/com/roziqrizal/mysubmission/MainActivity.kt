@@ -5,33 +5,36 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.roziqrizal.mysubmission.databinding.ActivityMainBinding
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.roziqrizal.mysubmission.db.UserHelper
+import com.roziqrizal.mysubmission.helper.MappingHelper
+import com.roziqrizal.mysubmission.viewmodel.ModelMainActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 @Suppress("NAME_SHADOWING")
 class MainActivity : AppCompatActivity() {
 
     private lateinit var rvUser: RecyclerView
     private lateinit var binding: ActivityMainBinding
-
     private lateinit var mainViewModel: ModelMainActivity
 
-    private lateinit var button: Button
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,10 +54,21 @@ class MainActivity : AppCompatActivity() {
             rvUser.layoutManager = LinearLayoutManager(this)
         }
 
-        mainViewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(ModelMainActivity::class.java)
+        val pref = SettingPreferences.getInstance(dataStore)
+        mainViewModel = ViewModelProvider(this, ViewModelFactory(pref)).get(
+            ModelMainActivity::class.java
+        )
 
         showRecyclerList(mainViewModel.list)
 
+        mainViewModel.getThemeSettings().observe(this,
+            { isDarkModeActive: Boolean ->
+                if (isDarkModeActive) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                }
+            })
 
     }
 
@@ -103,6 +117,11 @@ class MainActivity : AppCompatActivity() {
                 startActivity(moveWithObjectIntent)
                 true
             }
+            R.id.favourite -> {
+                val moveWithObjectIntent = Intent(this, FavouriteActivity::class.java)
+                startActivity(moveWithObjectIntent)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -119,20 +138,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun showSelectedHero(user: UserItem) {
-        val user = User(
-            user.id,
-            user.login,
-            user.avatarUrl,
-            user.reposUrl,
-            user.login,
-            user.login,
-            user.login,
-            user.login
-        )
-
-        val moveWithObjectIntent = Intent(this@MainActivity, UserProfileActivity::class.java)
-        moveWithObjectIntent.putExtra(UserProfileActivity.user_data, user)
-        startActivity(moveWithObjectIntent)
+        loadNotesAsync(user)
     }
 
     private fun showLoading(isLoading: Boolean) {
@@ -141,6 +147,38 @@ class MainActivity : AppCompatActivity() {
 
     companion object{
         private const val TAG = "MainViewModel"
+    }
+
+    private fun loadNotesAsync(user: UserItem) {
+        lifecycleScope.launch {
+            val noteHelper = UserHelper.getInstance(applicationContext)
+            var isFavourite :String = "not favourite"
+            noteHelper.open()
+            val deferredNotes = async(Dispatchers.IO) {
+                val cursor = noteHelper.queryById(user.login)
+                MappingHelper.mapCursorToArrayList(cursor)
+            }
+            val notes = deferredNotes.await()
+            if (notes.size > 0) {
+                isFavourite = "favourite"
+            }
+            noteHelper.close()
+
+            val user = User(
+                user.id,
+                user.login,
+                user.avatarUrl,
+                user.reposUrl,
+                isFavourite,
+                user.login,
+                user.login,
+                user.login
+            )
+
+            val moveWithObjectIntent = Intent(this@MainActivity, UserProfileActivity::class.java)
+            moveWithObjectIntent.putExtra(UserProfileActivity.user_data, user)
+            startActivity(moveWithObjectIntent)
+        }
     }
 
 

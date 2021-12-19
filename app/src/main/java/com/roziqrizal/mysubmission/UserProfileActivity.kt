@@ -1,25 +1,54 @@
 package com.roziqrizal.mysubmission
 
 import android.annotation.SuppressLint
+import android.content.ContentValues
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.roziqrizal.mysubmission.databinding.ActivityUserProfileBinding
+import com.roziqrizal.mysubmission.db.DatabaseContract
+import com.roziqrizal.mysubmission.db.UserHelper
+import com.roziqrizal.mysubmission.entity.Note
+import com.roziqrizal.mysubmission.viewmodel.ModelSettingActivity
+import com.roziqrizal.mysubmission.viewmodel.ModelUserActivity
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 class UserProfileActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUserProfileBinding
     private lateinit var activityViewModel: ModelUserActivity
+
+    private var isEdit = false
+    private var note: Note? = null
+    private var position: Int = 0
+    private lateinit var userHelper: UserHelper
+    private var title: String = ""
+    private var repository: String = ""
+    private var image: String = ""
+    private var isFavourite = ""
+
+    var isLoadingDetail:Boolean = false
+    var isLoadingFollower:Boolean = false
+    var isLoadingFollowing:Boolean = false
+
 
 
     @SuppressLint("SetTextI18n")
@@ -40,26 +69,48 @@ class UserProfileActivity : AppCompatActivity() {
         val tvQtyRepo: TextView = findViewById(R.id.tv_qty_repo)
 
         val person = intent.getParcelableExtra<User>(user_data) as User
-        activityViewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(ModelUserActivity::class.java)
+
+        val pref = SettingPreferences.getInstance(dataStore)
+        activityViewModel = ViewModelProvider(this, ViewModelFactory(pref)).get(
+            ModelUserActivity::class.java
+        )
+
+        activityViewModel.getThemeSettings().observe(this,
+            { isDarkModeActive: Boolean ->
+                if (isDarkModeActive) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                }
+            })
 
         showLoading(true)
 
         if(activityViewModel.usernameTV == ""){
             activityViewModel.usernameTV = person.username
         }
+        isFavourite = person.location
         activityViewModel.getDetailUser(activityViewModel.usernameTV)
         activityViewModel.isLoadingDetail.observe(this, {
             if(!it){
+
+
+
                 tvUsername.text = activityViewModel.userGithub
                 tvFullName.text = activityViewModel.usernameTV
+                title = activityViewModel.usernameTV
                 tvCompany.text = activityViewModel.company
                 tvLocation.text = activityViewModel.location
                 tvFollowing.text = activityViewModel.followingCount
                 tvQtyRepo.text = activityViewModel.repository
+                repository = activityViewModel.repository
                 Glide.with(this)
                     .load(activityViewModel.avatar) // URL Gambar
                     .circleCrop() // Mengubah image menjadi lingkaran
                     .into(imgAvatar) // imageView mana yang akan diterapkan
+                image = activityViewModel.avatar
+
+
 
             }
             showLoading(it)
@@ -96,12 +147,58 @@ class UserProfileActivity : AppCompatActivity() {
             }
             showLoading(it)
         })
-
-
         supportActionBar?.elevation = 0f
 
 
+        userHelper = UserHelper.getInstance(applicationContext)
+        userHelper.open()
 
+
+        /*if (result > 0) {
+        } else {
+        }*/
+
+    }
+
+    override fun onBackPressed() {
+        val moveWithObjectIntent = Intent(this@UserProfileActivity, MainActivity::class.java)
+        startActivity(moveWithObjectIntent)
+        super.onBackPressed()
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.favourite_menu, menu)
+
+        if (isFavourite=="favourite") {
+            menu.getItem(0).icon = resources.getDrawable(R.drawable.ic_baseline_star_yellow_24)
+        } else {
+            menu.getItem(0).icon = resources.getDrawable(R.drawable.ic_baseline_star_24)
+        }
+
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        return when (item.itemId) {
+            R.id.favourite -> {
+                if (isFavourite=="favourite") {
+                    item.setIcon(R.drawable.ic_baseline_star_24)
+                    delete(title)
+                    isFavourite = "not favourite"
+
+                } else {
+                    item.setIcon(R.drawable.ic_baseline_star_yellow_24)
+                    save()
+                    isFavourite = "favourite"
+
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     companion object {
@@ -113,10 +210,37 @@ class UserProfileActivity : AppCompatActivity() {
             R.string.followers,
             R.string.following
         )
+
+        const val EXTRA_NOTE = "extra_note"
+        const val EXTRA_POSITION = "extra_position"
+
     }
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
+
+    private fun save() {
+        val values = ContentValues()
+        values.put(DatabaseContract.NoteColumns.LOGIN, title)
+        values.put(DatabaseContract.NoteColumns.REPOSITORY, repository)
+        values.put(DatabaseContract.NoteColumns.IMAGE, image)
+
+        val result = userHelper.insert(values)
+        if (result > 0) {
+            Toast.makeText(this@UserProfileActivity, "User ditambahkan ke favourite", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this@UserProfileActivity, "gagal ditambahkan", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun delete(title: String){
+        val result = userHelper.deleteById(title).toLong()
+        if (result > 0) {
+            Toast.makeText(this@UserProfileActivity, "User dihapus dari favourite", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this@UserProfileActivity, "Gagal menghapus data", Toast.LENGTH_SHORT).show()
+        }
+    }
 }

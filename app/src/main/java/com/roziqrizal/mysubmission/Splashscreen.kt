@@ -9,12 +9,8 @@ class Splashscreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splashscreen)
 
-        try {
-            Thread.sleep(2000)
-            startActivity(Intent(this@Splashscreen, MainActivity::class.java))
+        startActivity(Intent(this@Splashscreen, MainActivity::class.java))
+        finish()
 
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
     }
 }

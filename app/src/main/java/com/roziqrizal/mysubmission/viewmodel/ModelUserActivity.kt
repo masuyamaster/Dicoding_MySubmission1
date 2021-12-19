@@ -1,14 +1,24 @@
-package com.roziqrizal.mysubmission
+package com.roziqrizal.mysubmission.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import com.roziqrizal.mysubmission.ApiConfig
+import com.roziqrizal.mysubmission.ResponseFollowerItem
+import com.roziqrizal.mysubmission.ResponseGithubUsersDetail
+import com.roziqrizal.mysubmission.SettingPreferences
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ModelUserActivity: ViewModel() {
+class ModelUserActivity(private val pref: SettingPreferences): ViewModel() {
+
+    fun getThemeSettings(): LiveData<Boolean> {
+        return pref.getThemeSetting().asLiveData()
+    }
+
     var listFollower = ArrayList<ResponseFollowerItem>()
     var listFollowing = ArrayList<ResponseFollowerItem>()
     var userGithub: String = ""
@@ -46,7 +56,7 @@ class ModelUserActivity: ViewModel() {
                     _follower.value = responseBody
                     listFollower = responseBody!!
                 } else {
-                    Log.e(ModelUserActivity.TAG, "onFailure: ${response.message()}")
+                    Log.e(TAG, "onFailure: ${response.message()}")
                 }
                 _isLoadingFollower.value = false
             }
@@ -54,7 +64,7 @@ class ModelUserActivity: ViewModel() {
                 _isLoadingFollower.value = false
                 _follower.value = null
                 println(t.message.toString())
-                Log.e(ModelUserActivity.TAG, "onFailure: ${t.message.toString()}")
+                Log.e(TAG, "onFailure: ${t.message.toString()}")
             }
         })
     }
@@ -69,7 +79,7 @@ class ModelUserActivity: ViewModel() {
                     _following.value = responseBodyFollowing
                     listFollowing = responseBodyFollowing!!
                 } else {
-                    Log.e(ModelUserActivity.TAG, "onFailure: ${response.message()}")
+                    Log.e(TAG, "onFailure: ${response.message()}")
                 }
                 _isLoadingFollowing.value = false
             }
@@ -77,7 +87,7 @@ class ModelUserActivity: ViewModel() {
                 _isLoadingFollowing.value = false
                 _following.value = null
                 println(t.message.toString())
-                Log.e(ModelUserActivity.TAG, "onFailure: ${t.message.toString()}")
+                Log.e(TAG, "onFailure: ${t.message.toString()}")
             }
         })
     }

@@ -12,12 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MySubmission">
-        <activity android:name=".SettingActivity"
+        <activity android:name=".FavouriteActivity"></activity>
+        <activity
+            android:name=".SettingActivity"
             android:exported="true"
             android:forceDarkAllowed="false"
-            tools:targetApi="q">
-
-        </activity>
+            tools:targetApi="q"></activity>
         <activity
             android:name=".Splashscreen"
             android:exported="true"
@@ -29,14 +29,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UserProfileActivity"
+        <activity
+            android:name=".UserProfileActivity"
             android:forceDarkAllowed="false"
             tools:targetApi="q" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:forceDarkAllowed="false"
-            tools:targetApi="q" />
+            tools:targetApi="q"></activity>
     </application>
 
 </manifest>

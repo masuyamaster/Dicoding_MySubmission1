@@ -1,28 +1,51 @@
 package com.roziqrizal.mysubmission
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.CompoundButton
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.roziqrizal.mysubmission.databinding.ActivitySettingBinding
+import com.roziqrizal.mysubmission.viewmodel.ModelSettingActivity
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 class SettingActivity : AppCompatActivity() {
+
+
+    private lateinit var binding: ActivitySettingBinding
+    private lateinit var switchMaterial: SwitchMaterial
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_setting)
+        setTitle(R.string.setting_bar_title)
+        binding = ActivitySettingBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val switchTheme = findViewById<SwitchMaterial>(R.id.switch_theme)
+        switchMaterial = binding.switchTheme
 
-        switchTheme.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
-            if (isChecked) {
-                println("============" + AppCompatDelegate.MODE_NIGHT_YES)
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                switchTheme.isChecked = true
-            } else {
-                println("============" + AppCompatDelegate.MODE_NIGHT_NO)
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                switchTheme.isChecked = false
-            }
+        val pref = SettingPreferences.getInstance(dataStore)
+        val mainViewModel = ViewModelProvider(this, ViewModelFactory(pref)).get(
+            ModelSettingActivity::class.java
+        )
+        mainViewModel.getThemeSettings().observe(this,
+            { isDarkModeActive: Boolean ->
+                if (isDarkModeActive) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    switchMaterial.isChecked = true
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    switchMaterial.isChecked = false
+                }
+            })
+
+        switchMaterial.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+            mainViewModel.saveThemeSetting(isChecked)
         }
     }
 }

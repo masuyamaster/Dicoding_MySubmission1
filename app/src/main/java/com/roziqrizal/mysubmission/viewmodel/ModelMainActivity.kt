@@ -1,12 +1,20 @@
-package com.roziqrizal.mysubmission
+package com.roziqrizal.mysubmission.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.*
+import com.roziqrizal.mysubmission.ApiConfig
+import com.roziqrizal.mysubmission.ResponseSearch
+import com.roziqrizal.mysubmission.SettingPreferences
+import com.roziqrizal.mysubmission.UserItem
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ModelMainActivity: ViewModel() {
+class ModelMainActivity(private val pref: SettingPreferences): ViewModel() {
+
+    fun getThemeSettings(): LiveData<Boolean> {
+        return pref.getThemeSetting().asLiveData()
+    }
 
     var list = ArrayList<UserItem>()
 
@@ -41,7 +49,7 @@ class ModelMainActivity: ViewModel() {
             override fun onFailure(call: Call<ResponseSearch>, t: Throwable) {
                 _isLoading.value = false
                 _search.value = null
-                Log.e(ModelMainActivity.TAG, "onFailure: ${t.message.toString()}")
+                Log.e(TAG, "onFailure: ${t.message.toString()}")
             }
         })
     }

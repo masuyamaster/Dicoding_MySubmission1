@@ -2,6 +2,7 @@
     <string name="app_name">MySubmission</string>
     <string name="github_user_bar_title">Github Users</string>
     <string name="github_user_detail_bar_title">Detail User</string>
+    <string name="github_user_favourite_bar_title">Favourite User</string>
     <string name="setting_bar_title">Setting</string>
     <string name="user_name">Username</string>
     <string name="full_name">Full Name</string>
