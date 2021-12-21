@@ -43,11 +43,8 @@ class UserProfileActivity : AppCompatActivity() {
     private var title: String = ""
     private var repository: String = ""
     private var image: String = ""
-    private var isFavourite = ""
 
-    var isLoadingDetail:Boolean = false
-    var isLoadingFollower:Boolean = false
-    var isLoadingFollowing:Boolean = false
+
 
 
 
@@ -57,6 +54,8 @@ class UserProfileActivity : AppCompatActivity() {
         setTitle(R.string.github_user_detail_bar_title)
         binding = ActivityUserProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        showLoadingDetail(true)
 
 
         val imgAvatar: ImageView = findViewById(R.id.iv_avatar)
@@ -68,7 +67,9 @@ class UserProfileActivity : AppCompatActivity() {
         val tvFollowing: TextView = findViewById(R.id.following)
         val tvQtyRepo: TextView = findViewById(R.id.tv_qty_repo)
 
-        val person = intent.getParcelableExtra<User>(user_data) as User
+
+
+
 
         val pref = SettingPreferences.getInstance(dataStore)
         activityViewModel = ViewModelProvider(this, ViewModelFactory(pref)).get(
@@ -84,13 +85,17 @@ class UserProfileActivity : AppCompatActivity() {
                 }
             })
 
-        showLoading(true)
+
 
         if(activityViewModel.usernameTV == ""){
-            activityViewModel.usernameTV = person.username
+            activityViewModel.usernameTV = (intent.getParcelableExtra<User>(user_data) as User).username
         }
-        isFavourite = person.location
+        if(activityViewModel.isFavourite == ""){
+            activityViewModel.isFavourite = (intent.getParcelableExtra<User>(user_data) as User).location
+        }
+
         activityViewModel.getDetailUser(activityViewModel.usernameTV)
+        user_data = activityViewModel.usernameTV
         activityViewModel.isLoadingDetail.observe(this, {
             if(!it){
 
@@ -102,6 +107,7 @@ class UserProfileActivity : AppCompatActivity() {
                 tvCompany.text = activityViewModel.company
                 tvLocation.text = activityViewModel.location
                 tvFollowing.text = activityViewModel.followingCount
+                tvFollowers.text = activityViewModel.followerCount
                 tvQtyRepo.text = activityViewModel.repository
                 repository = activityViewModel.repository
                 Glide.with(this)
@@ -113,26 +119,20 @@ class UserProfileActivity : AppCompatActivity() {
 
 
             }
-            showLoading(it)
+            showLoadingDetail(it)
         })
-        activityViewModel.getFollower(activityViewModel.usernameTV)
-        activityViewModel.getFollowing(activityViewModel.usernameTV)
-        activityViewModel.isLoadingFollower.observe(this, {
-            if(!it){
-                listFollower = activityViewModel.listFollower
-                val sectionsPagerAdapter = SectionsPagerAdapter(this)
-                val viewPager: ViewPager2 = findViewById(R.id.view_pager)
-                viewPager.adapter = sectionsPagerAdapter
-                val tabs: TabLayout = findViewById(R.id.TabLayout)
-                TabLayoutMediator(tabs, viewPager) { tab, position ->
-                    tab.text = resources.getString(TAB_TITLES[position])
-                }.attach()
-                tvFollowers.text = activityViewModel.followerCount
 
-            }
-            showLoading(it)
-        })
-        activityViewModel.isLoadingFollowing.observe(this, {
+        val sectionsPagerAdapter = SectionsPagerAdapter(this)
+        val viewPager: ViewPager2 = findViewById(R.id.view_pager)
+        viewPager.adapter = sectionsPagerAdapter
+        val tabs: TabLayout = findViewById(R.id.TabLayout)
+        TabLayoutMediator(tabs, viewPager) { tab, position ->
+            tab.text = resources.getString(TAB_TITLES[position])
+        }.attach()
+
+
+
+        /*activityViewModel.isLoadingFollowing.observe(this, {
             if(!it){
                 listFollowing = activityViewModel.listFollowing
                 val sectionsPagerAdapter = SectionsPagerAdapter(this)
@@ -143,10 +143,8 @@ class UserProfileActivity : AppCompatActivity() {
                     tab.text = resources.getString(TAB_TITLES[position])
                 }.attach()
                 tvFollowing.text = activityViewModel.followingCount
-
             }
-            showLoading(it)
-        })
+        })*/
         supportActionBar?.elevation = 0f
 
 
@@ -171,7 +169,7 @@ class UserProfileActivity : AppCompatActivity() {
         val inflater = menuInflater
         inflater.inflate(R.menu.favourite_menu, menu)
 
-        if (isFavourite=="favourite") {
+        if (activityViewModel.isFavourite=="favourite") {
             menu.getItem(0).icon = resources.getDrawable(R.drawable.ic_baseline_star_yellow_24)
         } else {
             menu.getItem(0).icon = resources.getDrawable(R.drawable.ic_baseline_star_24)
@@ -184,15 +182,15 @@ class UserProfileActivity : AppCompatActivity() {
         // Handle item selection
         return when (item.itemId) {
             R.id.favourite -> {
-                if (isFavourite=="favourite") {
+                if (activityViewModel.isFavourite=="favourite") {
                     item.setIcon(R.drawable.ic_baseline_star_24)
                     delete(title)
-                    isFavourite = "not favourite"
+                    activityViewModel.isFavourite = "not favourite"
 
                 } else {
                     item.setIcon(R.drawable.ic_baseline_star_yellow_24)
                     save()
-                    isFavourite = "favourite"
+                    activityViewModel.isFavourite = "favourite"
 
                 }
                 true
@@ -216,9 +214,10 @@ class UserProfileActivity : AppCompatActivity() {
 
     }
 
-    private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    private fun showLoadingDetail(isLoading: Boolean) {
+        binding.progressBarDetail.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
+
 
 
     private fun save() {

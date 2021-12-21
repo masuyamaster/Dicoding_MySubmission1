@@ -14,4 +14,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="progressbar">#E3D91A</color>
+
+    <color name="viewpagecolor">#6E690C</color>
+    <color name="viewpageselectedcolor">#E3D91A</color>
+
 </resources>

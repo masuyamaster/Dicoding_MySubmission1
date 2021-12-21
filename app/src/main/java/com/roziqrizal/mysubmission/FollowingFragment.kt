@@ -5,15 +5,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.roziqrizal.mysubmission.databinding.FragmentFollowerBinding
 import com.roziqrizal.mysubmission.databinding.FragmentFollowingBinding
+import com.roziqrizal.mysubmission.viewmodel.ModelFollowerFragment
+import com.roziqrizal.mysubmission.viewmodel.ModelFollowingFragment
 
 private const val ARG_PARAM1 = "param1"
 private var _binding: FragmentFollowingBinding? = null
 private val binding get() = _binding!!
 
+private lateinit var followingViewModel: ModelFollowingFragment
 
 class FollowingFragment : Fragment() {
     private var param1: String? = null
@@ -34,6 +37,20 @@ class FollowingFragment : Fragment() {
         rvFollowing = binding.rvFollowing
         rvFollowing.setHasFixedSize(true)
         rvFollowing.layoutManager = LinearLayoutManager(context)
+        showLoadingDetail(true)
+
+        followingViewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(ModelFollowingFragment::class.java)
+
+        followingViewModel.getFollowing(param1.toString())
+
+        followingViewModel.isLoadingFollowing.observe(this.viewLifecycleOwner, {
+            if(!it){
+                rvFollowing.adapter = ListUserFollower(followingViewModel.listFollowing)
+                showLoadingDetail(it)
+            }
+        })
+
+
         println("following fragment")
         println("result = "+UserProfileActivity.listFollowing)
         val listHeroAdapter = ListUserFollowing(UserProfileActivity.listFollowing)
@@ -49,5 +66,9 @@ class FollowingFragment : Fragment() {
                     putString(ARG_PARAM1, param1)
                 }
             }
+    }
+
+    private fun showLoadingDetail(isLoading: Boolean) {
+        binding.progressBarFollower.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 }

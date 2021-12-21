@@ -6,14 +6,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.roziqrizal.mysubmission.databinding.ItemNoteBinding
+import com.roziqrizal.mysubmission.databinding.ItemUserBinding
 import com.roziqrizal.mysubmission.entity.Note
 
 class UserFavouriteAdapter(private val onItemClickCallback: OnItemClickCallback): RecyclerView.Adapter<UserFavouriteAdapter.UserViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_note, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_user, parent, false)
         return UserViewHolder(view)
     }
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
@@ -21,15 +21,15 @@ class UserFavouriteAdapter(private val onItemClickCallback: OnItemClickCallback)
     }
     override fun getItemCount(): Int = this.listUserFavourite.size
     inner class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val binding = ItemNoteBinding.bind(itemView)
+        private val binding = ItemUserBinding.bind(itemView)
         fun bind(note: Note) {
-            binding.tvItemTitle.text = note.title
-            binding.tvItemDescription.text = note.description
+            binding.tvUserName.text = note.title
+            binding.tvItemLocation.text = note.description
             Glide.with(itemView.context)
                 .load(note.image) // URL Gambar
                 .circleCrop() // Mengubah image menjadi lingkaran
                 .into(binding.imgItemAvatar) // imageView mana yang akan diterapkan
-            binding.cvItemNote.setOnClickListener {
+            binding.cardView.setOnClickListener {
                 onItemClickCallback.onItemClicked(note, adapterPosition)
             }
         }

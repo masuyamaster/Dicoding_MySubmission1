@@ -5,10 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
-import com.roziqrizal.mysubmission.ApiConfig
-import com.roziqrizal.mysubmission.ResponseFollowerItem
-import com.roziqrizal.mysubmission.ResponseGithubUsersDetail
-import com.roziqrizal.mysubmission.SettingPreferences
+import com.roziqrizal.mysubmission.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -19,8 +16,12 @@ class ModelUserActivity(private val pref: SettingPreferences): ViewModel() {
         return pref.getThemeSetting().asLiveData()
     }
 
+
+
+
     var listFollower = ArrayList<ResponseFollowerItem>()
-    var listFollowing = ArrayList<ResponseFollowerItem>()
+
+    var isFavourite = ""
     var userGithub: String = ""
     var usernameTV: String = ""
     var company: String = ""
@@ -31,66 +32,22 @@ class ModelUserActivity(private val pref: SettingPreferences): ViewModel() {
     var avatar: String = ""
 
     private val _follower = MutableLiveData<ArrayList<ResponseFollowerItem>>()
-    private val _following = MutableLiveData<ArrayList<ResponseFollowerItem>>()
+
 
     private val _isLoadingFollower = MutableLiveData<Boolean>()
     val isLoadingFollower: LiveData<Boolean> = _isLoadingFollower
 
-    private val _isLoadingFollowing = MutableLiveData<Boolean>()
-    val isLoadingFollowing: LiveData<Boolean> = _isLoadingFollowing
+
 
     private val _isLoadingDetail = MutableLiveData<Boolean>()
     val isLoadingDetail: LiveData<Boolean> = _isLoadingDetail
 
     companion object{
         private const val TAG = "UserActivityModel"
+        var user_data = "userdata"
     }
 
-    fun getFollower(username: String){
-        _isLoadingFollower.value = true
-        val client = ApiConfig.getApiService().getUsersDetailFollower(username)
-        client.enqueue(object : Callback<ArrayList<ResponseFollowerItem>> {
-            override fun onResponse(call: Call<ArrayList<ResponseFollowerItem>>, response: Response<ArrayList<ResponseFollowerItem>>) {
-                val responseBody = response.body()
-                if (response.isSuccessful) {
-                    _follower.value = responseBody
-                    listFollower = responseBody!!
-                } else {
-                    Log.e(TAG, "onFailure: ${response.message()}")
-                }
-                _isLoadingFollower.value = false
-            }
-            override fun onFailure(call: Call<ArrayList<ResponseFollowerItem>>, t: Throwable) {
-                _isLoadingFollower.value = false
-                _follower.value = null
-                println(t.message.toString())
-                Log.e(TAG, "onFailure: ${t.message.toString()}")
-            }
-        })
-    }
 
-    fun getFollowing(username: String){
-        _isLoadingFollowing.value = true
-        val clientFollowing = ApiConfig.getApiService().getUsersDetailFollowing(username)
-        clientFollowing.enqueue(object : Callback<ArrayList<ResponseFollowerItem>> {
-            override fun onResponse(call: Call<ArrayList<ResponseFollowerItem>>, response: Response<ArrayList<ResponseFollowerItem>>) {
-                val responseBodyFollowing = response.body()
-                if (response.isSuccessful) {
-                    _following.value = responseBodyFollowing
-                    listFollowing = responseBodyFollowing!!
-                } else {
-                    Log.e(TAG, "onFailure: ${response.message()}")
-                }
-                _isLoadingFollowing.value = false
-            }
-            override fun onFailure(call: Call<ArrayList<ResponseFollowerItem>>, t: Throwable) {
-                _isLoadingFollowing.value = false
-                _following.value = null
-                println(t.message.toString())
-                Log.e(TAG, "onFailure: ${t.message.toString()}")
-            }
-        })
-    }
 
     fun getDetailUser(username: String){
         _isLoadingDetail.value = true
